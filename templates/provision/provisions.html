@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+
+<link href="{% static 'css/provision.css' %}" rel="stylesheet" type="text/css"/>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<div class="page-wrapper">
+
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar">
+        <div class="sidebar-content">
+            <h3 class="sidebar-title"><u>Categories</u> </h3>
+            <ul class="sidebar-menu">
+                <li>
+                    <a href="{% url 'cannedMeatFish' %}" class="sidebar-link" data-category="kg">
+                        <span class="category-icon">🥫</span>
+                        Cannned Meat & Fish
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'breakfastDrink' %}" class="sidebar-link" data-category="kg">
+                        <span class="category-icon">🍺</span>
+                        BreakFast Drinks
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'milkSugar' %}" class="sidebar-link" data-category="kg">
+                        <span class="category-icon">🥛</span>
+                        Milk & Sugar
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'cookiesBiscuit' %}" class="sidebar-link" data-category="kg">
+                        <span class="category-icon">🍪</span>
+                       Cookies & Biscuits
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'riceNoodles' %}" class="sidebar-link" data-category="kg">
+                        <span class="category-icon">🍚</span>
+                       Rice & Noodles
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'oilTomato' %}" class="sidebar-link" data-category="primary">
+                        <span class="category-icon">🍎</span>
+                       Oil & Tomato Paste  
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'softdrinksjuice' %}" class="sidebar-link" data-category="jhs">
+                        <span class="category-icon">🍦</span>
+                        Soft Driks & Juice 
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'toiletry' %}" class="sidebar-link" data-category="shs">
+                        <span class="category-icon">🧻</span>
+                        Toiletrys & Sanitary Pads
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{% url 'dormetoryBeddingEssentials' %}" class="sidebar-link" data-category="shs">
+                        <span class="category-icon">🧺</span>
+                        Dormitory & Bedding Essentials
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'bathroomHygiene' %}" class="sidebar-link" data-category="shs">
+                        <span class="category-icon">🚿</span>
+                         Bathroom & Hygiene Supplies
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'cleaningSupplies' %}" class="sidebar-link" data-category="shs">
+                        <span class="category-icon">🧼</span>
+                         Cleaning Supplies
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'storageUtility' %}" class="sidebar-link" data-category="shs">
+                        <span class="category-icon">🧳</span>
+                         Storage & Utility
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{% url 'personalItemsAcceessories' %}" class="sidebar-link" data-category="shs">
+                        <span class="category-icon"> 🧴</span>
+                        Personal Items & Accessories
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+        <div class="animated-background"></div>
+        <section class="section-content padding-y bg">
+            <div class="container py-5">
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                    {% for book in products %}
+                    <div class="col">
+                        <div class="card h-100 shadow-sm hover-elevation">
+                            <div class="position-relative">
+                                <img src="{{ book.images.url }}" class="card-img-top" alt="{{ book.product_name }}" style="height: 300px; object-fit: cover;">
+                                <div class="position-absolute top-0 end-0 p-2">
+                                    <div class="rating-badge bg-white rounded-pill px-2 py-1 shadow-sm">
+                                        <span class="rating-stars">
+                                            {% for i in "12345" %}
+                                                {% with i_num=i|add:"0" %}
+                                                    <i class="fa 
+                                                        {% if product.averageReview >= i_num %}fa-star text-warning
+                                                        {% elif product.averageReview > i_num|add:"-1" %}fa-star-half-o text-warning
+                                                        {% else %}fa-star-o
+                                                        {% endif %}" 
+                                                        aria-hidden="true">
+                                                    </i>
+                                                {% endwith %}
+                                            {% endfor %}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title text-truncate">{{ book.product_name }}</h5>
+                                <p class="card-text mb-1 text-muted">By {{ book.author }}</p>
+                                <p class="card-text small text-muted">Published: {{ book.publication_date }}</p>
+                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                    <span class="h5 mb-0 text-primary"> ₵{{ book.price }}</span>
+                                    <button class="btn btn-outline-primary">Add to Cart</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+
+
+
+
+{% endblock %}
