@@ -1,22 +1,33 @@
 from django.shortcuts import render
 from store.models import Product, ReviewRating, Book, Provisions, Stationary,  Footwear,  Electronics,  Clothing
 from category.models import BookCategory, ProvisionCategory, FootwearCategory,  ClothingCategory
+import random
 
 def home(request):
-    products = Product.objects.all().filter(is_available=True).order_by('created_date')
+    # Fetch a few from each category
+    books = list(Book.objects.filter(is_available=True)[:3])
+    provisions = list(Provisions.objects.filter(is_available=True)[:3])
+    stationery = list(Stationary.objects.filter(is_available=True)[:3])
+    footwear = list(Footwear.objects.filter(is_available=True)[:3])
+    electronics = list(Electronics.objects.filter(is_available=True)[:3])
+    clothing = list(Clothing.objects.filter(is_available=True)[:3])
 
-    # Get the reviews
-    reviews = None
-    for product in products:
-        reviews = ReviewRating.objects.filter(product_id=product.id, status=True)
+    mixed_products = books + provisions + stationery + footwear + electronics + clothing
+    random.shuffle(mixed_products)
+    featured_products = mixed_products[:12]
+
+    
+    product_ids = [product.id for product in featured_products]
+    reviews = ReviewRating.objects.filter(product_id__in=product_ids, status=True)
 
     context = {
-        'products': products,
+        'products': featured_products,
         'reviews': reviews,
         'category': 'home',
         'page_name': 'home',
     }
     return render(request, 'home.html', context)
+
 
 
 def books(request):

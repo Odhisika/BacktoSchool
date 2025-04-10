@@ -1,6 +1,12 @@
 from django.contrib import admin
 from .models import Book, Product, Electronics, Clothing, Provisions,  Footwear, Stationary, Variation, ReviewRating, ProductGallery
 import admin_thumbnails
+from django.core.exceptions import ValidationError
+
+def clean(self):
+    if not isinstance(self.product, (Clothing, Footwear)):
+        raise ValidationError("Variations can only be used for Clothing or Footwear products.")
+
 
 @admin_thumbnails.thumbnail('image')
 class ProductGalleryInline(admin.TabularInline):
