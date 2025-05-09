@@ -7,7 +7,7 @@
 <link href="{% static 'css/provision.css' %}" rel="stylesheet" type="text/css"/>
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<div class="page-wrapper">
+<div class="page-wrapper" style="margin-top: 85px;">
 
     <!-- Sidebar Navigation -->
     <nav class="sidebar">
@@ -104,11 +104,11 @@
         <section class="section-content padding-y bg">
             <div class="container py-5">
                 <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-                    {% for book in products %}
+                    {% for provision in products %}
                     <div class="col">
                         <div class="card h-100 shadow-sm hover-elevation">
                             <div class="position-relative">
-                                <img src="{{ book.images.url }}" class="card-img-top" alt="{{ book.product_name }}" style="height: 300px; object-fit: cover;">
+                                <img src="{{ provision.images.url }}" class="card-img-top" alt="{{provision.product_name }}" style="height: 300px; object-fit: cover;">
                                 <div class="position-absolute top-0 end-0 p-2">
                                     <div class="rating-badge bg-white rounded-pill px-2 py-1 shadow-sm">
                                         <span class="rating-stars">
@@ -128,12 +128,12 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <h5 class="card-title text-truncate">{{ book.product_name }}</h5>
-                                <p class="card-text mb-1 text-muted">By {{ book.author }}</p>
-                                <p class="card-text small text-muted">Published: {{ book.publication_date }}</p>
+                                <h5 class="card-title text-truncate">{{ provision.product_name }}</h5>
                                 <div class="d-flex justify-content-between align-items-center mt-3">
-                                    <span class="h5 mb-0 text-primary"> ₵{{ book.price }}</span>
-                                    <button class="btn btn-outline-primary">Add to Cart</button>
+                                    <span class="h5 mb-0 text-primary"> ₵{{ provision.price }}</span>
+                                    <a href="{{ provision.get_url }}" class="view-btn">
+                                        Details <i class="fa fa-arrow-right"></i>
+                                    </a>
                                 </div>
                             </div>
                         </div>

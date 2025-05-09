@@ -1,10 +1,11 @@
 from django.db import models
 from accounts.models import Account
-from store.models import Product, Variation
+from store.models import Product
 from datetime import timedelta
 from django.utils.timezone import now
 from decimal import Decimal
 import datetime
+
 
 class Order(models.Model):
     STATUS_CHOICES = [
@@ -59,12 +60,34 @@ class OrderProduct(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='order_products')
     user = models.ForeignKey(Account, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    variations = models.ManyToManyField(Variation, blank=True)
     quantity = models.PositiveIntegerField()
     product_price = models.DecimalField(max_digits=10, decimal_places=2)
+    size = models.CharField(max_length=50, null=True, blank=True)  # New
+    color = models.CharField(max_length=50, null=True, blank=True)
+    footsizes = models.IntegerField( null=True, blank=True) 
     ordered = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"{self.product.product_name} (x{self.quantity})"
+
+
+
+class PaymentProof(models.Model):
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('confirmed', 'Confirmed'),
+        ('rejected', 'Rejected'),
+    ]
+
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    user = models.ForeignKey(Account, on_delete=models.CASCADE)
+    proof_image = models.ImageField(upload_to='payment_proofs/')
+    note = models.TextField(blank=True, null=True)
+    submitted_at = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
+    reviewed = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f'Proof for Order #{self.order.order_number}'

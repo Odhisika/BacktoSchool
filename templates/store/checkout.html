@@ -5,7 +5,7 @@
 {% block content %}
 
 
-<section class="section-content padding-y bg" style="padding-top: 100px;">
+<section class="section-content padding-y bg" style="padding-top: 145px;">
 <div class="container">
 
 <!-- ============================ COMPONENT 1 ================================= -->
@@ -14,7 +14,7 @@
 	<aside class="col-lg-6">
 <div class="card">
   <div class="card-body">
-    <h4 class="card-title mb-4">Billing Address</h4>
+    <h4 class="card-title mb-4">Delivery Address </h4>
     <form action="{% url 'place_order' %}" method="POST">
       {% csrf_token %}
       <div class="form-row">
@@ -33,32 +33,35 @@
           <input type="email" name="email" class="form-control" required>
         </div>
         <div class="col form-group">
-          <label for="">Phone Number</label>
-          <input type="text" name="phone" class="form-control" required>
+          <label for="phone">Phone Number</label>
+          <input type="tel" name="phone" class="form-control" required 
+            pattern="^\d{10}$" 
+            title="Enter a valid 10-digit phone number (e.g., 0244123456)">
         </div>
+        
       </div>
       <div class="form-row">
         <div class="col form-group">
-          <label for="">Address Line 1</label>
+          <label for=""> House Address</label>
           <input type="text" name="address_line_1" class="form-control" required>
         </div>
         <div class="col form-group">
-          <label for="">Address Line 2</label>
+          <label for="">GPS Address</label>
           <input type="text" name="address_line_2" class="form-control">
         </div>
       </div>
       <div class="form-row">
         <div class="col form-group">
-          <label for="">City</label>
+          <label for="">Region</label>
           <input type="text" name="city" class="form-control" required>
         </div>
         <div class="col form-group">
-          <label for="">State</label>
+          <label for="">Town</label>
           <input type="text" name="state" class="form-control" required>
         </div>
         <div class="col form-group">
-          <label for="">Country</label>
-          <input type="text" name="country" class="form-control" required>
+          <label for="">School</label>
+          <input type="text" name="country" class="form-control" >
         </div>
         </div>
         <div class="form-row">
@@ -94,12 +97,16 @@
       			<figcaption class="info">
       				<a href="{{ cart_item.product.get_url }}" class="title text-dark">{{ cart_item.product.product_name }}</a>
       				<p class="text-muted small">
-      					{% if cart_item.variations.all %}
-      						{% for item in cart_item.variations.all %}
-      							{{ item.variation_category | capfirst }} : {{ item.variation_value | capfirst }} <br>
-      						{% endfor %}
-      					{% endif %}
-      				</p>
+                {% if cart_item.color %}
+                    Color: {{ cart_item.color|capfirst }}<br>
+                {% endif %}
+                {% if cart_item.size %}
+                    Size: {{ cart_item.size|capfirst }}<br>
+                {% endif %}
+                {% if cart_item.footsizes %}
+                    Foot Size: {{ cart_item.footsizes|capfirst }}<br>
+                {% endif %}
+            </p>            
       			</figcaption>
       		</figure>
       	</td>

@@ -8,6 +8,7 @@ import datetime
 
 
 # Base Product Model (Now Concrete)
+
 class Product(models.Model):
     product_name = models.CharField(max_length=200, unique=True)
     slug = models.SlugField(max_length=200, unique=True)
@@ -48,16 +49,39 @@ class Electronics(Product):
     warranty_period = models.IntegerField(help_text="Warranty period in months")
 
 
-class Clothing(Product):
-    clothing_category = models.ForeignKey(ClothingCategory, on_delete=models.CASCADE, related_name="clothing", default=1)
+class Size(models.Model):
+    name = models.CharField(max_length=20, unique=True)
+
+    def __str__(self):
+        return self.name
+
+class FootSize(models.Model):
+    number = models.IntegerField(unique=True)
+
+    def __str__(self):
+        return str(self.number) 
+
+
+class Color(models.Model):
+    name = models.CharField(max_length=30, unique=True)
+
+    def __str__(self):
+        return self.name
+
 
 
 class Footwear(Product):
-    footwear_category = models.ForeignKey(FootwearCategory,on_delete=models.CASCADE,
-                                          related_name="footwear",
-                                            default=1,
-    )
+    footwear_category = models.ForeignKey(FootwearCategory, on_delete=models.CASCADE, related_name="footwear", default=1)
     shoe_type = models.CharField(max_length=50)
+    colors = models.ManyToManyField(Color, blank=True, related_name='footwears')
+    footsizes = models.ManyToManyField(FootSize, blank=True, related_name='footwears')
+
+
+class Clothing(Product):
+    clothing_category = models.ForeignKey(ClothingCategory, on_delete=models.CASCADE, related_name="clothing", default=1)
+    colors = models.ManyToManyField(Color, blank=True, related_name='clothings')
+    sizes = models.ManyToManyField(Size, blank=True, related_name='clothings')
+
 
 
 
@@ -69,33 +93,8 @@ class Provisions(Product):
     brand = models.CharField(max_length=255)
     provision_category = models.ForeignKey(ProvisionCategory, on_delete=models.CASCADE, related_name="provisions", default=1)
     pack_size = models.IntegerField(help_text="Number of items in a pack")
-
-
-
-
-variation_category_choice = (
-    ('color', 'Color'),
-    ('size', 'Size'),
-)
-
-class VariationManager(models.Manager):
-    def colors(self):
-        return self.filter(variation_category='color', is_active=True)
-
-    def sizes(self):
-        return self.filter(variation_category='size', is_active=True)
-
-class Variation(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="variations")
-    variation_category = models.CharField(max_length=100, choices=variation_category_choice)
-    variation_value = models.CharField(max_length=100)
-    is_active = models.BooleanField(default=True)
-    created_date = models.DateTimeField(auto_now=True)
-
-    objects = VariationManager()
-
-    def __str__(self):
-        return f"{self.variation_category}: {self.variation_value}"
+    colors = models.ManyToManyField(Color, blank=True, related_name='provisions')
+    
 
 
 

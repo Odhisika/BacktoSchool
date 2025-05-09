@@ -6,7 +6,7 @@
 <link href="{% static 'css/provision.css' %}" rel="stylesheet" type="text/css"/>
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<div class="page-wrapper">
+<div class="page-wrapper" style="margin-top: 100px;">
 
     <!-- Sidebar Navigation -->
     <nav class="sidebar">
@@ -41,17 +41,31 @@
         </div>
     </nav>
 
-    <!-- Main Content Area -->
-    <main class="main-content">
+      <!-- Main Content Area with modern design -->
+      <main class="main-content">
         <div class="animated-background"></div>
-        <section class="section-content padding-y bg">
-            <div class="container py-5">
-                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        <section class="section-content padding-y">
+            <div class="container py-4">
+                <!-- Title section -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h2 class="fw-bold text-primary">Browse Our Collection of Books</h2>
+                        <div class="divider bg-primary" style="height: 3px; width: 50px;"></div>
+                    </div>
+                </div>
+                
+                <!-- Books grid with modern cards -->
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
                     {% for book in products %}
                     <div class="col">
-                        <div class="card h-100 shadow-sm hover-elevation">
+                        <div class="card h-100 border-0 shadow-sm rounded-3 overflow-hidden hover-elevation transition-all">
                             <div class="position-relative">
-                                <img src="{{ book.images.url }}" class="card-img-top" alt="{{ book.product_name }}" style="height: 300px; object-fit: cover;">
+                                <a href="{{ book.get_url }}" class="text-decoration-none">
+                                    <div class="image-wrapper bg-light d-flex justify-content-center align-items-center" style="height: 220px;">
+                                        <img src="{{ book.images.url }}" class="card-img-top" alt="{{ book.product_name }}" style="max-height: 220px; max-width: 100%; object-fit: contain;">
+                                    </div>
+                                </a>
+                                <!-- Rating badge with modern styling -->
                                 <div class="position-absolute top-0 end-0 p-2">
                                     <div class="rating-badge bg-white rounded-pill px-2 py-1 shadow-sm">
                                         <span class="rating-stars">
@@ -71,12 +85,13 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <h5 class="card-title text-truncate">{{ book.product_name }}</h5>
-                                <p class="card-text mb-1 text-muted">By {{ book.author }}</p>
-                                <p class="card-text small text-muted">Published: {{ book.publication_date }}</p>
+                                <h5 class="card-title text-truncate fw-bold">{{ book.product_name }}</h5>
+                                <p class="card-text mb-1 text-muted small">By {{ book.author }}</p>
                                 <div class="d-flex justify-content-between align-items-center mt-3">
-                                    <span class="h5 mb-0 text-primary"> ₵{{ book.price }}</span>
-                                    <button class="btn btn-outline-primary">Add to Cart</button>
+                                    <span class="h5 mb-0 fw-bold text-primary"> ₵{{ book.price }}</span>
+                                    <a href="{{ book.get_url }}" class="btn btn-sm btn-primary rounded-pill px-3">
+                                        <i class="fa fa-eye me-1"></i> View
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -88,7 +103,57 @@
     </main>
 </div>
 
-
-
+<!-- Custom CSS for ultra-modern design -->
+<style>
+    .hover-elevation {
+        transition: all 0.3s ease;
+    }
+    
+    .hover-elevation:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+    }
+    
+    .transition-all {
+        transition: all 0.3s ease;
+    }
+    
+    .animated-background {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 300px;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        z-index: -1;
+        clip-path: polygon(0 0, 100% 0, 100% 65%, 0 100%);
+    }
+    
+    .card {
+        border-radius: 12px;
+    }
+    
+    .card-img-top {
+        transition: transform 0.3s ease;
+    }
+    
+    .card:hover .card-img-top {
+        transform: scale(1.05);
+    }
+    
+    .btn-primary {
+        box-shadow: 0 4px 6px rgba(0,123,255,0.11);
+    }
+    
+    .rating-badge {
+        border-radius: 20px;
+        font-size: 0.8rem;
+    }
+    
+    .image-wrapper {
+        transition: all 0.3s ease;
+        border-bottom: 1px solid #f0f0f0;
+    }
+</style>
 
 {% endblock %}

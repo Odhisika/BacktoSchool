@@ -34,6 +34,8 @@ urlpatterns = [
     path('clothing/', include('clothing.urls')),
     path('footwear/', include('footwear.urls')),
 
+    path('chatbot-reply/', views.chatbot_reply, name='chatbot_reply'),
+
     # ORDERS
     path('orders/', include('orders.urls')),
 

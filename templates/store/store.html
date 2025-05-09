@@ -3,167 +3,302 @@
 {% load humanize %}
 
 {% block content %}
-<!-- ========================= SECTION PAGETOP ========================= -->
-<section class="section-content padding-y bg" style="padding-top: 100px;">
-<div class="container">
-	{% if 'search' in request.path %}
-		<h2 class="title-page">Search Result</h2>
-	{% else %}
-		<h2 class="title-page">Store</h2>
-	{% endif %}
-
-</div> <!-- container //  -->
+<!-- ========================= SECTION HEADER ========================= -->
+<section class="bg-light py-5">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-md-8">
+        {% if 'search' in request.path %}
+          <h1 class="fw-bold text-primary">Search Results</h1>
+          <p class="lead text-muted">Showing matching products for your query</p>
+        {% else %}
+          <h1 class="fw-bold text-primary">Browse Our Collection</h1>
+          <p class="lead text-muted">Discover premium products at competitive prices</p>
+        {% endif %}
+      </div>
+      <div class="col-md-4">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-md-end mb-0">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Store</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
 </section>
-<!-- ========================= SECTION INTRO END// ========================= -->
+<!-- ========================= SECTION HEADER END ========================= -->
 
 <!-- ========================= SECTION CONTENT ========================= -->
-<section class="section-content padding-y">
-<div class="container">
+<section class="py-5">
+  <div class="container">
+    <div class="row g-4">
+      <!-- Sidebar filters -->
+      <aside class="col-lg-3">
+        <div class="card shadow-sm rounded-3 mb-4">
+          <article class="filter-group">
+            <header class="card-header bg-transparent border-0 p-3">
+              <a class="d-flex align-items-center justify-content-between text-decoration-none" data-bs-toggle="collapse" href="#collapse_1">
+                <h5 class="mb-0 fw-bold">Categories</h5>
+                <i class="fas fa-chevron-down"></i>
+              </a>
+            </header>
+            <div class="collapse show" id="collapse_1">
+              <div class="card-body pt-0">
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item border-0 ps-0">
+                    <a href="{% url 'store' %}" class="text-decoration-none {% if request.path == '/store/' %}fw-bold text-primary{% endif %}">All Products</a>
+                  </li>
+                  {% for category in links %}
+                  <li class="list-group-item border-0 ps-0">
+                    <a href="{{ category.get_url }}" class="text-decoration-none {% if category.slug in request.path %}fw-bold text-primary{% endif %}">{{ category.category_name }}</a>
+                  </li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </div>
+          </article>
 
-<div class="row">
-	<aside class="col-md-3">
+          <article class="filter-group">
+            <header class="card-header bg-transparent border-0 p-3">
+              <a class="d-flex align-items-center justify-content-between text-decoration-none" data-bs-toggle="collapse" href="#collapse_3">
+                <h5 class="mb-0 fw-bold">Price Range</h5>
+                <i class="fas fa-chevron-down"></i>
+              </a>
+            </header>
+            <div class="collapse show" id="collapse_3">
+              <div class="card-body pt-0">
+                <form id="filter-form">
+                  <div class="row g-3">
+                    <div class="col-6">
+                      <label class="form-label">Min</label>
+                      <select class="form-select" name="min_price" onchange="this.form.submit()">
+                        <option value="100" {% if request.GET.min_price == "100" %}selected{% endif %}>GHS 100</option>
+                        <option value="500" {% if request.GET.min_price == "500" %}selected{% endif %}>GHS 500</option>
+                        <option value="1000" {% if request.GET.min_price == "1000" %}selected{% endif %}>GHS 1000</option>
+                        <option value="1500" {% if request.GET.min_price == "1500" %}selected{% endif %}>GHS 1500</option>
+                        <option value="2000" {% if request.GET.min_price == "2000" %}selected{% endif %}>GHS 2000</option>
+                        <option value="5000" {% if request.GET.min_price == "5000" %}selected{% endif %}>GHS 5000</option>
+                        <option value="10000" {% if request.GET.min_price == "10000" %}selected{% endif %}>GHS 10000</option>
+                      </select>
+                    </div>
+                    <div class="col-6">
+                      <label class="form-label">Max</label>
+                      <select class="form-select" name="max_price" onchange="this.form.submit()">
+                        <option value="5000" {% if request.GET.max_price == "5000" %}selected{% endif %}>GHS 5000</option>
+                        <option value="10000" {% if request.GET.max_price == "10000" %}selected{% endif %}>GHS 10000</option>
+                        <option value="15000" {% if request.GET.max_price == "15000" %}selected{% endif %}>GHS 15000</option>
+                        <option value="20000" {% if request.GET.max_price == "20000" %}selected{% endif %}>GHS 20000</option>
+                        <option value="50000" {% if request.GET.max_price == "50000" %}selected{% endif %}>GHS 50000</option>
+                        <option value="70000" {% if request.GET.max_price == "70000" %}selected{% endif %}>GHS 70000</option>
+                        <option value="100000" {% if request.GET.max_price == "100000" %}selected{% endif %}>GHS 100000</option>
+                      </select>
+                    </div>
+                  </div>
+                  <button class="btn btn-primary w-100 mt-3">Apply Filter</button>
+                </form>
+              </div>
+            </div>
+          </article>
+        </div>
+      </aside>
 
-<div class="card">
-	<article class="filter-group">
-		<header class="card-header">
-			<a href="#" data-toggle="collapse" data-target="#collapse_1" aria-expanded="true" class="">
-				<i class="icon-control fa fa-chevron-down"></i>
-				<h6 class="title">Categories</h6>
-			</a>
-		</header>
-		<div class="filter-content collapse show" id="collapse_1" style="">
-			<div class="card-body">
+      <!-- Main content -->
+      <main class="col-lg-9">
+        <!-- Results header -->
+        <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
+          <div>
+            <span class="badge bg-primary rounded-pill">{{ product_count }}</span>
+            <span class="ms-2 text-muted">Products found</span>
+          </div>
+          <div class="d-flex align-items-center">
+            <label class="me-2 text-nowrap d-none d-sm-block">Sort by:</label>
+            <select class="form-select form-select-sm w-auto">
+              <option>Newest</option>
+              <option>Price: Low to High</option>
+              <option>Price: High to Low</option>
+              <option>Popular</option>
+            </select>
+          </div>
+        </div>
 
-				<ul class="list-menu">
-					<li><a href="{% url 'store' %}">All Products  </a></li>
-					{% for category in links %}
-				<li><a href="{{ category.get_url }}">{{ category.category_name }}  </a></li>
-					{% endfor %}
-				</ul>
+        <!-- Products grid -->
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+          {% if products %}
+            {% for product in products %}
+            <div class="col">
+              <div class="card h-100 border-0 shadow-sm hover-shadow">
+                <div class="position-relative">
+                  <a href="{{ product.get_url }}">
+                    <img src="{{ product.images.url }}" class="card-img-top" alt="{{ product.product_name }}">
+                  </a>
+                </div>
+                <div class="card-body d-flex flex-column">
+                  <h5 class="card-title">
+                    <a href="{{ product.get_url }}" class="text-decoration-none text-dark">{{ product.product_name }}</a>
+                  </h5>
+                  <div class="mt-auto">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                      <span class="h5 mb-0 text-primary fw-bold">GHS {{ product.price|intcomma }}</span>
+                    </div>
+                    <a href="{{ product.get_url }}" class="btn btn-outline-primary w-100">View Details</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          {% else %}
+            <div class="col-12 text-center py-5">
+              <div class="py-5">
+                <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                <h3>No products found</h3>
+                <p class="text-muted">Try adjusting your search or filter criteria</p>
+                <a href="{% url 'store' %}" class="btn btn-primary mt-3">Browse All Products</a>
+              </div>
+            </div>
+          {% endif %}
+        </div>
 
-			</div> <!-- card-body.// -->
-		</div>
-	</article> <!-- filter-group  .// -->
-	
+        <!-- Improved pagination -->
+        {% if products.has_other_pages %}
+        <nav class="mt-5" aria-label="Product navigation">
+          <div class="pagination-container">
+            <ul class="pagination justify-content-center flex-wrap" id="pagination">
+              <!-- Previous button -->
+              <li class="page-item {% if not products.has_previous %}disabled{% endif %}">
+                <a class="page-link" href="{% if products.has_previous %}?page={{ products.previous_page_number }}{% if request.GET.min_price %}&min_price={{ request.GET.min_price }}{% endif %}{% if request.GET.max_price %}&max_price={{ request.GET.max_price }}{% endif %}{% else %}#{% endif %}" aria-label="Previous">
+                  <span aria-hidden="true">&laquo;</span>
+                </a>
+              </li>
+              
+              <!-- First page -->
+              {% if products.number > 3 %}
+              <li class="page-item">
+                <a class="page-link" href="?page=1{% if request.GET.min_price %}&min_price={{ request.GET.min_price }}{% endif %}{% if request.GET.max_price %}&max_price={{ request.GET.max_price }}{% endif %}">1</a>
+              </li>
+              {% endif %}
+              
+              <!-- Ellipsis for many pages before current -->
+              {% if products.number > 4 %}
+              <li class="page-item disabled">
+                <a class="page-link" href="#" tabindex="-1">...</a>
+              </li>
+              {% endif %}
+              
+              <!-- Pages around current page -->
+              {% for i in products.paginator.page_range %}
+                {% if i >= products.number|add:"-2" and i <= products.number|add:"2" %}
+                  <li class="page-item {% if products.number == i %}active{% endif %}">
+                    <a class="page-link" href="?page={{ i }}{% if request.GET.min_price %}&min_price={{ request.GET.min_price }}{% endif %}{% if request.GET.max_price %}&max_price={{ request.GET.max_price }}{% endif %}">{{ i }}</a>
+                  </li>
+                {% endif %}
+              {% endfor %}
+              
+              <!-- Ellipsis for many pages after current -->
+              {% if products.number < products.paginator.num_pages|add:"-3" %}
+              <li class="page-item disabled">
+                <a class="page-link" href="#" tabindex="-1">...</a>
+              </li>
+              {% endif %}
+              
+              <!-- Last page -->
+              {% if products.number < products.paginator.num_pages|add:"-2" %}
+              <li class="page-item">
+                <a class="page-link" href="?page={{ products.paginator.num_pages }}{% if request.GET.min_price %}&min_price={{ request.GET.min_price }}{% endif %}{% if request.GET.max_price %}&max_price={{ request.GET.max_price }}{% endif %}">{{ products.paginator.num_pages }}</a>
+              </li>
+              {% endif %}
+              
+              <!-- Next button -->
+              <li class="page-item {% if not products.has_next %}disabled{% endif %}">
+                <a class="page-link" href="{% if products.has_next %}?page={{ products.next_page_number }}{% if request.GET.min_price %}&min_price={{ request.GET.min_price }}{% endif %}{% if request.GET.max_price %}&max_price={{ request.GET.max_price }}{% endif %}{% else %}#{% endif %}" aria-label="Next">
+                  <span aria-hidden="true">&raquo;</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+          
+          <!-- Page jump form for many pages -->
+          {% if products.paginator.num_pages > 7 %}
+          <div class="text-center mt-3">
+            <form class="d-inline-flex" method="get">
+              <label class="form-label me-2 mb-0 d-flex align-items-center">Go to page:</label>
+              <input type="number" name="page" min="1" max="{{ products.paginator.num_pages }}" value="{{ products.number }}" class="form-control form-control-sm me-2" style="width: 70px;">
+              {% if request.GET.min_price %}
+                <input type="hidden" name="min_price" value="{{ request.GET.min_price }}">
+              {% endif %}
+              {% if request.GET.max_price %}
+                <input type="hidden" name="max_price" value="{{ request.GET.max_price }}">
+              {% endif %}
+              <button type="submit" class="btn btn-sm btn-outline-primary">Go</button>
+            </form>
+          </div>
+          {% endif %}
+        </nav>
+        {% endif %}
 
-	<article class="filter-group">
-		<header class="card-header">
-			<a href="#" data-toggle="collapse" data-target="#collapse_3" aria-expanded="true" class="">
-				<i class="icon-control fa fa-chevron-down"></i>
-				<h6 class="title">Price range </h6>
-			</a>
-		</header>
-		<div class="filter-content collapse show" id="collapse_3" >
-			<div class="card-body">
-
-				<form id="filter-form">
-					<div class="form-row">
-						<div class="form-group col-md-6">
-							<label>Min</label>
-							<select class="form-control" name="min_price" onchange="this.form.submit()">
-								<option value="100" {% if request.GET.min_price == "100" %}selected{% endif %}>GHS100</option>
-								<option value="500" {% if request.GET.min_price == "500" %}selected{% endif %}>GHS500</option>
-								<option value="1000" {% if request.GET.min_price == "100" %}selected{% endif %}>GHS1000</option>
-								<option value="1500" {% if request.GET.min_price == "1500" %}selected{% endif %}>GHS1500</option>
-								<option value="2000" {% if request.GET.min_price == "2000" %}selected{% endif %}>GHS2000</option>
-								<option value="5000" {% if request.GET.min_price == "5000" %}selected{% endif %}>GHS5000</option>
-								<option value="10000" {% if request.GET.min_price == "10000" %}selected{% endif %}>GHS10000</option>
-							</select>
-						</div>
-				
-						<div class="form-group col-md-6">
-							<label>Max</label>
-							<select class="form-control" name="max_price" onchange="this.form.submit()">
-								<option value="5000" {% if request.GET.max_price == "5000" %}selected{% endif %}>GHS5000</option>
-								<option value="10000" {% if request.GET.max_price == "10000" %}selected{% endif %}>GHS10000</option>
-								<option value="15000" {% if request.GET.max_price == "15000" %}selected{% endif %}>GHS15000</option>
-								<option value="20000" {% if request.GET.max_price == "20000" %}selected{% endif %}>GHS20000</option>
-								<option value="50000" {% if request.GET.max_price == "50000" %}selected{% endif %}>GHS50000</option>
-								<option value="70000" {% if request.GET.max_price == "70000" %}selected{% endif %}>GHS70000</option>
-								<option value="100000" {% if request.GET.max_price == "100000" %}selected{% endif %}>GHS100000</option>
-							</select>
-						</div>
-					</div>
-				</form>
-				<button class="btn btn-block btn-primary">Apply</button>
-			</div><!-- card-body.// -->
-		</div>
-	</article> 
-
-</div> <!-- card.// -->
-
-	</aside> <!-- col.// -->
-	<main class="col-md-9">
-
-<header class="border-bottom mb-4 pb-3">
-		<div class="form-inline">
-			<span class="mr-md-auto"><b>{{ product_count }}</b> items found </span>
-
-		</div>
-</header><!-- sect-heading -->
-
-<div class="row">
-	{% if products %}
-	{% for product in products %}
-	<div class="col-md-4">
-		<figure class="card card-product-grid">
-			<div class="img-wrap">
-
-				<a href="{{ product.get_url }}"><img src="{{ product.images.url }}"></a>
-
-			</div> <!-- img-wrap.// -->
-			<figcaption class="info-wrap">
-				<div class="fix-height">
-					<a href="{{ product.get_url }}" class="title">{{ product.product_name }}</a>
-					<div class="price-wrap mt-2">
-						<span class="price">GHS {{ product.price|intcomma }}</span>
-					</div> <!-- price-wrap.// -->
-				</div>
-				<a href="{{ product.get_url }}" class="btn btn-block btn-primary">View Details </a>
-			</figcaption>
-		</figure>
-	</div> <!-- col.// -->
-	{% endfor %}
-	{% else %}
-	<div>
-		<h2>No result found. Please try again.</h2>
-	</div>
-	{% endif %}
-</div> <!-- row end.// -->
-
-
-<nav class="mt-4" aria-label="Page navigation sample">
-	{% if products.has_other_pages %}
-	  <ul class="pagination">
-			{% if products.has_previous %}
-	    <li class="page-item"><a class="page-link" href="?page={{products.previous_page_number}}">Previous</a></li>
-			{% else %}
-			<li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
-			{% endif %}
-
-			{% for i in products.paginator.page_range %}
-				{% if products.number == i %}
-	    		<li class="page-item active"><a class="page-link" href="#">{{i}}</a></li>
-				{% else %}
-					<li class="page-item"><a class="page-link" href="?page={{i}}">{{i}}</a></li>
-				{% endif %}
-	    {% endfor %}
-
-			{% if products.has_next %}
-	    	<li class="page-item"><a class="page-link" href="?page={{products.next_page_number}}">Next</a></li>
-			{% else %}
-				<li class="page-item disabled"><a class="page-link" href="#">Next</a></li>
-			{% endif %}
-	  </ul>
-	{% endif %}
-</nav>
-
-	</main> <!-- col.// -->
-
-</div>
-
-</div> <!-- container .//  -->
+      </main>
+    </div>
+  </div>
 </section>
-<!-- ========================= SECTION CONTENT END// ========================= -->
+<!-- ========================= SECTION CONTENT END ========================= -->
 
+<!-- Add custom CSS for hover effects and responsive adjustments -->
+<style>
+  .hover-shadow:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.12) !important;
+    transition: all 0.3s ease;
+  }
+  
+  .pagination-container {
+    overflow-x: auto;
+    padding-bottom: 5px;
+  }
+  
+  .pagination {
+    white-space: nowrap;
+    flex-wrap: nowrap !important;
+  }
+  
+  @media (max-width: 767px) {
+    .pagination .page-link {
+      padding: 0.4rem 0.75rem;
+    }
+  }
+  
+  /* Custom scrollbar for pagination container */
+  .pagination-container::-webkit-scrollbar {
+    height: 4px;
+  }
+  
+  .pagination-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+  }
+  
+  .pagination-container::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+  }
+  
+  .pagination-container::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+</style>
+
+<!-- Include Bootstrap 5 JS and Font Awesome if not already in base template -->
+<script>
+  // Check if Bootstrap 5 is loaded, if not, load it
+  if (typeof bootstrap === 'undefined') {
+    document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"><\/script>');
+  }
+  
+  // Check if Font Awesome is loaded, if not, load it
+  if (!document.querySelector('link[href*="font-awesome"]')) {
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css';
+    document.head.appendChild(link);
+  }
+</script>
 {% endblock %}

@@ -2,7 +2,7 @@ from django.db import models
 
 # Create your models here.
 from django.db import models
-from store.models import Product, Variation
+from store.models import Product
 from accounts.models import Account
 
 
@@ -19,10 +19,13 @@ class Cart(models.Model):
 class CartItem(models.Model):
     user = models.ForeignKey(Account, on_delete=models.CASCADE, null=True)
     product = models.ForeignKey(Product, on_delete=models.CASCADE,blank=True, default=None)
-    variations = models.ManyToManyField(Variation, blank=True)
     cart    = models.ForeignKey(Cart, on_delete=models.CASCADE, null=True)
     quantity = models.IntegerField()
+    size = models.CharField(max_length=50, null=True, blank=True)  # New
+    color = models.CharField(max_length=50, null=True, blank=True)
+    footsizes = models.IntegerField( null=True, blank=True)  # New
     is_active = models.BooleanField(default=True)
+    
 
     def sub_total(self):
         return self.product.price * self.quantity

@@ -1,83 +1,390 @@
+
+
 {% extends 'base.html' %}
 {% load static %}
 
 {% block content %}
 
 <link href="{% static 'css/provision.css' %}" rel="stylesheet" type="text/css"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<div class="page-wrapper">
 
-    <!-- Sidebar Navigation -->
-    <nav class="sidebar">
+<style>
+    .page-wrapper {
+        display: grid;
+        grid-template-columns: minmax(240px, 1fr) 4fr;
+        gap: 1.5rem;
+        margin-top: 2rem;
+    }
+    
+    @media (max-width: 992px) {
+        .page-wrapper {
+            grid-template-columns: 1fr;
+        }
+    }
+    
+    .sidebar {
+        position: sticky;
+        top: 100px;
+        background: linear-gradient(135deg, #f8f9fa, #ffffff);
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
+        padding: 1.5rem;
+        max-height: calc(100vh - 120px);
+        overflow-y: auto;
+    }
+    
+    .sidebar-title {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 1.5rem;
+        font-size: 1.4rem;
+        position: relative;
+        letter-spacing: 0.5px;
+    }
+    
+    .sidebar-title::after {
+        content: '';
+        position: absolute;
+        bottom: -8px;
+        left: 0;
+        width: 60px;
+        height: 3px;
+        background: #3498db;
+        border-radius: 3px;
+    }
+    
+    .sidebar-menu {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .sidebar-link {
+        display: flex;
+        align-items: center;
+        padding: 0.8rem 1rem;
+        border-radius: 8px;
+        margin-bottom: 0.5rem;
+        color: #444;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        font-weight: 500;
+    }
+    
+    .sidebar-link:hover {
+        background-color: rgba(52, 152, 219, 0.1);
+        color: #3498db;
+        transform: translateX(5px);
+    }
+    
+    .category-icon {
+        margin-right: 12px;
+        font-size: 1.2rem;
+    }
+    
+    .main-content {
+        position: relative;
+    }
+    
+    .product-card {
+        transition: all 0.3s ease;
+        height: 100%;
+        border: none;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+    
+    .product-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .product-image-wrapper {
+        overflow: hidden;
+        height: 280px;
+        position: relative;
+    }
+    
+    .product-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+    
+    .product-card:hover .product-image {
+        transform: scale(1.08);
+    }
+    
+    .quick-view-btn {
+        position: absolute;
+        bottom: -50px;
+        left: 0;
+        right: 0;
+        background: rgba(52, 152, 219, 0.85);
+        color: white;
+        text-align: center;
+        padding: 8px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+    
+    .product-card:hover .quick-view-btn {
+        bottom: 0;
+    }
+    
+    .product-info {
+        padding: 1.2rem;
+    }
+    
+    .product-title {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: #333;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    
+    .product-price {
+        font-weight: 700;
+        color: #3498db;
+        font-size: 1.25rem;
+    }
+    
+    .view-btn {
+        border-radius: 30px;
+        padding: 0.4rem 1rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        background-color: transparent;
+        border: 1.5px solid #3498db;
+        color: #3498db;
+    }
+    
+    .view-btn:hover {
+        background-color: #3498db;
+        color: white;
+        transform: translateX(3px);
+    }
+    
+    .rating-badge {
+        background-color: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(4px);
+        border-radius: 20px;
+        padding: 4px 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .breadcrumb {
+        background: linear-gradient(135deg, #f8f9fa, #ffffff);
+        padding: 12px 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        margin-bottom: 2rem;
+    }
+    
+    .product-grid {
+        display: grid;
+        gap: 1.5rem;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    }
+    
+    .empty-results {
+        text-align: center;
+        padding: 3rem;
+        background: #f8f9fa;
+        border-radius: 12px;
+        color: #6c757d;
+    }
+    
+    .collection-heading {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 1.5rem;
+        position: relative;
+        padding-bottom: 0.5rem;
+    }
+    
+    .collection-heading::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        height: 3px;
+        width: 60px;
+        background-color: #3498db;
+    }
+    
+    /* Sale badge */
+    .sale-badge {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        background-color: #e74c3c;
+        color: white;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.8rem;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+    
+    /* Animated gradient background */
+    .animated-background {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 350px;
+        background: linear-gradient(135deg, rgba(52, 152, 219, 0.1) 0%, rgba(52, 152, 219, 0.05) 100%);
+        z-index: -1;
+        transform: skewY(-3deg);
+        transform-origin: top left;
+    }
+</style>
+
+<div class="page-wrapper container" style="margin-top: 120px;">
+    <!-- Sidebar -->
+    <aside class="sidebar">
         <div class="sidebar-content">
-            <h3 class="sidebar-title"><u>Catergories</u></h3>
+            <h3 class="sidebar-title">Footwears</h3>
             <ul class="sidebar-menu">
                 <li>
-                    <a href="{% url 'mens' %}" class="sidebar-link" data-category="kg">
-                        <span class="category-icon">👟</span>
-                        Mens Footwear
+                    <a href="{% url 'mens' %}" class="sidebar-link">
+                        <span class="category-icon"><i class="fas fa-male"></i></span>
+                        Men's footwear
                     </a>
                 </li>
                 <li>
-                    <a href="{% url 'ladies' %}" class="sidebar-link" data-category="primary">
-                        <span class="category-icon">👠</span>
-                        Ladies Footwear
+                    <a href="{% url 'ladies' %}" class="sidebar-link">
+                        <span class="category-icon"><i class="fas fa-female"></i></span>
+                        Women's footwear
                     </a>
                 </li>
-                
+                <li>
+                    <a href="#" class="sidebar-link">
+                        <span class="category-icon"><i class="fas fa-tshirt"></i></span>
+                        New Arrivals
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="sidebar-link">
+                        <span class="category-icon"><i class="fas fa-tags"></i></span>
+                        Special Offers
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="sidebar-link">
+                        <span class="category-icon"><i class="fas fa-crown"></i></span>
+                        Premium footwear
+                    </a>
+                </li>
             </ul>
         </div>
-    </nav>
+    </aside>
 
     <!-- Main Content Area -->
     <main class="main-content">
         <div class="animated-background"></div>
-        <section class="section-content padding-y bg">
-            <div class="container py-5">
-                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-                    {% for book in products %}
-                    <div class="col">
-                        <div class="card h-100 shadow-sm hover-elevation">
-                            <div class="position-relative">
-                                <img src="{{ book.images.url }}" class="card-img-top" alt="{{ book.product_name }}" style="height: 300px; object-fit: cover;">
-                                <div class="position-absolute top-0 end-0 p-2">
-                                    <div class="rating-badge bg-white rounded-pill px-2 py-1 shadow-sm">
-                                        <span class="rating-stars">
-                                            {% for i in "12345" %}
-                                                {% with i_num=i|add:"0" %}
-                                                    <i class="fa 
-                                                        {% if product.averageReview >= i_num %}fa-star text-warning
-                                                        {% elif product.averageReview > i_num|add:"-1" %}fa-star-half-o text-warning
-                                                        {% else %}fa-star-o
-                                                        {% endif %}" 
-                                                        aria-hidden="true">
-                                                    </i>
-                                                {% endwith %}
-                                            {% endfor %}
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card-body">
-                                <h5 class="card-title text-truncate">{{ book.product_name }}</h5>
-                                <p class="card-text mb-1 text-muted">By {{ book.author }}</p>
-                                <p class="card-text small text-muted">Published: {{ book.publication_date }}</p>
-                                <div class="d-flex justify-content-between align-items-center mt-3">
-                                    <span class="h5 mb-0 text-primary"> ₵{{ book.price }}</span>
-                                    <button class="btn btn-outline-primary">Add to Cart</button>
-                                </div>
-                            </div>
+        
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="{% url 'home' %}" class="text-decoration-none">
+                        <i class="fas fa-home"></i> Home
+                    </a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">
+                    {{ single_product.product_name|default:"footwaar" }}
+                </li>
+            </ol>
+        </nav>
+        
+        <!-- Title Section -->
+        <h2 class="collection-heading">Our Latest footwaar</h2>
+        
+        <!-- Products Grid -->
+        {% if products %}
+        <div class="product-grid">
+            {% for footwear in products %}
+            <div class="product-card shadow">
+                <div class="product-image-wrapper">
+                    <img src="{{ footwear.images.url }}" class="product-image" alt="{{ footwear.product_name }}">
+                    
+                    <!-- Optional Sale Badge -->
+                    {% if footwear.is_sale %}
+                    <div class="sale-badge">SALE</div>
+                    {% endif %}
+                    
+                    <!-- Rating Badge -->
+                    <div class="position-absolute top-0 end-0 m-2">
+                        <div class="rating-badge">
+                            {% for i in "12345" %}
+                                {% with i_num=i|add:"0" %}
+                                    <i class="fa{% if clothing.averageReview >= i_num %} fa-star text-warning
+                                    {% elif clothing.averageReview > i_num|add:"-1" %} fa-star-half-alt text-warning
+                                    {% else %} fa-star text-muted{% endif %}" 
+                                    aria-hidden="true"></i>
+                                {% endwith %}
+                            {% endfor %}
                         </div>
                     </div>
-                    {% endfor %}
+                    
+                    <!-- Quick View Button -->
+                    <div class="quick-view-btn">
+                        <i class="fas fa-eye me-1"></i> Quick View
+                    </div>
+                </div>
+                
+                <div class="product-info">
+                    <h5 class="product-title">{{ footwear.product_name }}</h5>
+                    <div class="d-flex justify-content-between align-items-center mt-2">
+                        <span class="product-price">₵{{ footwear.price }}</span>
+                        <a href="{{ footwear.get_url }}" class="btn view-btn">
+                            View Details
+                        </a>
+                    </div>
                 </div>
             </div>
-        </section>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-results">
+            <i class="fas fa-search fa-3x mb-3"></i>
+            <h3>No products found</h3>
+            <p>Try adjusting your search or browse other categories.</p>
+        </div>
+        {% endif %}
     </main>
 </div>
 
-
-
+<script>
+    // Optional JavaScript for enhanced interactions
+    document.addEventListener('DOMContentLoaded', function() {
+        // Highlight current category in sidebar
+        const currentPath = window.location.pathname;
+        document.querySelectorAll('.sidebar-link').forEach(link => {
+            if (link.getAttribute('href') === currentPath) {
+                link.classList.add('active');
+                link.style.backgroundColor = 'rgba(52, 152, 219, 0.1)';
+                link.style.color = '#3498db';
+            }
+        });
+        
+        // Quick view button functionality
+        document.querySelectorAll('.quick-view-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                const productCard = this.closest('.product-card');
+                const productUrl = productCard.querySelector('a').getAttribute('href');
+                window.location.href = productUrl;
+            });
+        });
+    });
+</script>
 
 {% endblock %}
